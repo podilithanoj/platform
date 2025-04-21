@@ -1,5 +1,5 @@
 module "vpc" {
-  source = "../../modules/network/vpc"
+  source = "../../templates/network/vpc"
 
   name               = var.name
   vpc_cidr           = var.vpc_cidr
@@ -9,4 +9,6 @@ module "vpc" {
   enable_nat_gateway = var.enable_nat_gateway
   environment        = var.environment
 }
+
+
 
