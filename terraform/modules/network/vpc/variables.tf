@@ -1,34 +1,34 @@
 variable "name" {
+  description = "Name of the VPC"
   type        = string
-  description = "VPC name"
 }
 
 variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
   type        = string
-  description = "CIDR for the VPC"
 }
 
 variable "availability_zones" {
+  description = "Availability Zones"
   type        = list(string)
-  description = "List of availability zones"
 }
 
 variable "public_subnets" {
-  type        = list(string)
   description = "Public subnet CIDRs"
+  type        = list(string)
 }
 
 variable "private_subnets" {
-  type        = list(string)
   description = "Private subnet CIDRs"
+  type        = list(string)
 }
 
 variable "enable_nat_gateway" {
+  description = "Whether to enable NAT Gateway"
   type        = bool
-  description = "Enable NAT gateway"
 }
 
 variable "environment" {
+  description = "Environment name (e.g., dev, prod)"
   type        = string
-  description = "Environment name"
 }
