@@ -1,15 +1,35 @@
-variable "name" {}
-variable "vpc_cidr" {}
+variable "name" {
+  description = "Name of the VPC and associated resources"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block for the VPC"
+  type        = string
+}
+
 variable "availability_zones" {
-  type = list(string)
+  description = "List of availability zones to use for the subnets"
+  type        = list(string)
 }
+
 variable "public_subnets" {
-  type = list(string)
+  description = "List of public subnet CIDRs corresponding to availability zones"
+  type        = list(string)
 }
+
 variable "private_subnets" {
-  type = list(string)
+  description = "List of private subnet CIDRs corresponding to availability zones"
+  type        = list(string)
 }
+
 variable "enable_nat_gateway" {
-  type = bool
+  description = "Whether to enable a NAT Gateway for private subnet internet access"
+  type        = bool
+  default     = true
 }
-variable "environment" {}
+
+variable "environment" {
+  description = "Environment tag (e.g., dev, qa, prod)"
+  type        = string
+}
