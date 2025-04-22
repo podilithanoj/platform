@@ -12,6 +12,7 @@ module "vpc" {
   private_subnets    = var.private_subnets
   enable_nat_gateway = var.enable_nat_gateway
   environment        = var.environment
+  repository         = var.repository
 }
 
 

@@ -1,6 +1,19 @@
+data "aws_caller_identity" "current" {}
+
+locals {
+  tags = {
+    Application = var.application
+    CreatedBy   = var.created_by
+    DeployedBy  = data.aws_caller_identity.current.arn
+    Repository  = var.repository
+    Environment = var.environment
+    Project     = "JavaApp"
+  }
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.1.2"
+  version = "5.21.0"
 
   name = var.name
   cidr = var.vpc_cidr
@@ -15,21 +28,12 @@ module "vpc" {
   single_nat_gateway   = true
   one_nat_gateway_per_az = false
 
-  tags = {
-    Environment = var.environment
-    Project     = "JavaApp"
-  }
+  tags = locals.tags
+  
 }
 
 
-data "aws_caller_identity" "current" {}
 
-locals {
-  tags = {
-    Application = var.application
-    CreatedBy   = var.created_by
-    DeployedBy  = data.aws_caller_identity.current.arn
-    #Environment = var.environment
-    Repository  = var.repository
-  }
-}
+
+
+
