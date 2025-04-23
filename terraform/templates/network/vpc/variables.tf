@@ -1,5 +1,5 @@
 variable "name" {
-  description = "Name of the VPC"
+  description = "Name prefix for resources"
   type        = string
 }
 
@@ -9,63 +9,64 @@ variable "vpc_cidr" {
 }
 
 variable "availability_zones" {
-  description = "Availability Zones"
+  description = "List of AZs used in this environment"
   type        = list(string)
 }
 
 variable "public_subnets" {
-  description = "Public subnet CIDRs"
+  description = "List of public subnet CIDRs"
   type        = list(string)
 }
 
 variable "private_subnets" {
-  description = "Private subnet CIDRs"
+  description = "List of private subnet CIDRs"
   type        = list(string)
 }
 
 variable "enable_nat_gateway" {
   description = "Whether to enable NAT Gateway"
   type        = bool
+  default     = true
+}
+
+variable "enable_ipv6" {
+  description = "Whether to enable IPv6 addressing"
+  type        = bool
+  default     = false
 }
 
 variable "environment" {
-  description = "Environment name (e.g., dev, prod)"
+  description = "Environment name (e.g., dev, qa, prod)"
   type        = string
-}
-
-variable "application" {
-  description = "Application name and/or identifier"
-  type        = string
-  default     = null # can be left blank/out due to shared resources not tied to an application
 }
 
 variable "created_by" {
-  description = "The framework, tool, and/or method that created this resource - terraform, serverless, pulumi, manual, etc."
+  description = "Indicates who created the infrastructure"
   type        = string
   default     = "terraform"
-
-  validation {
-    condition     = can(regex("^terraform$", var.created_by))
-    error_message = "The created_by value should be 'terraform' since this is written in terraform."
-  }
 }
 
-#variable "environment" {
-#  description = "The environment does this resource belong to? - dev, qa, prod"
-#  type        = string
-#
-#  validation {
-#    condition     = can(regex("(^Dev$)|(^Qa$)|(^prod$)", var.environment))
-#    error_message = "The environment value should be one of - sandbox, nonprod, prod."
-#  }
-#}
+variable "application" {
+  description = "Application name or identifier"
+  type        = string
+}
 
 variable "repository" {
-  description = "The repository name where this resource is managed and codified"
+  description = "Repository URL managing this code"
   type        = string
+}
 
-  validation {
-    condition     = can(regex("^https:\\/\\/github\\.com\\/*", var.repository))
-    error_message = "The repository should be in the form of `https://github.com/*`."
-  }
+variable "vpc_tags" {
+  description = "Tags applied to VPC resources"
+  type        = map(string)
+}
+
+variable "public_subnet_tags" {
+  description = "Tags applied to all public subnets"
+  type        = map(string)
+}
+
+variable "private_subnet_tags" {
+  description = "Tags applied to all private subnets"
+  type        = map(string)
 }
