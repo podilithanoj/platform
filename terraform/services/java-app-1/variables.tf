@@ -22,8 +22,9 @@ variable "private_subnets" {
   description = "List of private subnet CIDRs"
   type        = list(string)
 }
+
 variable "data_subnets" {
-  description = "List of private subnet CIDRs"
+  description = "List of data-tier subnet CIDRs"
   type        = list(string)
 }
 

@@ -21,9 +21,13 @@ module "vpc" {
   public_subnet_ipv6_prefixes                    = var.enable_ipv6 ? [0, 1, 2] : []
   private_subnet_ipv6_prefixes                   = var.enable_ipv6 ? [3, 4, 5] : []
 
-  vpc_tags            = var.vpc_tags
-  public_subnet_tags  = var.public_subnet_tags
-  private_subnet_tags = var.private_subnet_tags
+  vpc_tags           = var.vpc_tags
+  public_subnet_tags = var.public_subnet_tags
+}
 
-  map_public_ip_on_launch = false
+resource "aws_ec2_tag" "data_subnet_tags" {
+  count       = length(var.data_subnets)
+  resource_id = module.vpc.private_subnets[count.index + length(var.private_subnets)]
+  key         = "Name"
+  value       = "${var.name}-${var.environment}-data-subnet-${element(var.availability_zones, count.index)}"
 }

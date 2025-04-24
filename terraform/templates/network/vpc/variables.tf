@@ -9,7 +9,7 @@ variable "vpc_cidr" {
 }
 
 variable "availability_zones" {
-  description = "List of AZs used in this environment"
+  description = "List of Availability Zones used"
   type        = list(string)
 }
 
@@ -22,56 +22,54 @@ variable "private_subnets" {
   description = "List of private subnet CIDRs"
   type        = list(string)
 }
+
 variable "data_subnets" {
-  description = "List of private subnet CIDRs"
+  description = "List of data-tier (private) subnet CIDRs"
   type        = list(string)
+  default     = []
 }
 
 variable "enable_nat_gateway" {
-  description = "Whether to enable NAT Gateway"
+  description = "Enable NAT Gateway for private subnets"
   type        = bool
   default     = true
 }
 
 variable "enable_ipv6" {
-  description = "Whether to enable IPv6 addressing"
+  description = "Enable IPv6 support"
   type        = bool
   default     = false
 }
 
 variable "environment" {
-  description = "Environment name (e.g., dev, qa, prod)"
+  description = "Environment name (e.g., dev, staging, prod)"
   type        = string
 }
 
 variable "created_by" {
-  description = "Indicates who created the infrastructure"
+  description = "Indicates the tool/team that created the infrastructure"
   type        = string
   default     = "terraform"
 }
 
 variable "application" {
-  description = "Application name or identifier"
+  description = "Application or microservice name"
   type        = string
 }
 
 variable "repository" {
-  description = "Repository URL managing this code"
+  description = "URL of the Git repository managing this infrastructure"
   type        = string
 }
 
 variable "vpc_tags" {
-  description = "Tags applied to VPC resources"
+  description = "Tags to apply to the VPC"
   type        = map(string)
+  default     = {}
 }
 
 variable "public_subnet_tags" {
-  description = "Tags applied to all public subnets"
+  description = "Tags to apply to all public subnets"
   type        = map(string)
+  default     = {}
 }
-
-variable "private_subnet_tags" {
-  description = "Tags applied to all private subnets"
-  type        = map(string)
-}
-
