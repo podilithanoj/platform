@@ -22,6 +22,7 @@ module "vpc" {
   availability_zones = var.availability_zones
   public_subnets     = var.public_subnets
   private_subnets    = var.private_subnets
+  data_subnets       = var.data_subnets
   enable_nat_gateway = var.enable_nat_gateway
   enable_ipv6        = var.enable_ipv6
   environment        = var.environment
@@ -41,3 +42,5 @@ module "vpc" {
     Name = "${var.name}-${var.environment}-private-subnet"
   })
 }
+
+

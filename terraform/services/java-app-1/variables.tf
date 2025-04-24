@@ -22,6 +22,10 @@ variable "private_subnets" {
   description = "List of private subnet CIDRs"
   type        = list(string)
 }
+variable "data_subnets" {
+  description = "List of private subnet CIDRs"
+  type        = list(string)
+}
 
 variable "enable_nat_gateway" {
   description = "Whether to create NAT Gateway(s)"
