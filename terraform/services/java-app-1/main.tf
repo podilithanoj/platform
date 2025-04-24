@@ -34,7 +34,7 @@ module "vpc" {
 
   public_subnet_tags = merge(local.tags, {
     Tier = "public"
-    Name = "${var.name}-${var.environment}-public-subnet"
+    Name = "${var.name}-public-subnet"
   })
 }
 
@@ -43,5 +43,5 @@ resource "aws_ec2_tag" "data_subnet_name_tag" {
   count       = length(var.data_subnets)
   resource_id = module.vpc.private_subnets[count.index + length(var.private_subnets)]
   key         = "Name"
-  value       = "${var.name}-${var.environment}-data-subnet-${element(var.availability_zones, count.index)}"
+  value       = "${var.name}-data-subnet-${element(var.availability_zones, count.index)}"
 }
