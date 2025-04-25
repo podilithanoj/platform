@@ -37,7 +37,7 @@ jfrog --version
 # ----------------------
 # GitHub Actions Runner Setup
 # ----------------------
-runner_version="2.308.0"
+
 mkdir -p /actions-runner && cd /actions-runner
 
 curl -O -L https://github.com/actions/runner/releases/download/v${runner_version}/actions-runner-linux-x64-${runner_version}.tar.gz

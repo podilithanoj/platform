@@ -71,11 +71,6 @@ variable "github_repo" {
   type        = string
 }
 
-variable "github_token" {
-  description = "token for github authentication"
-  type        = string
-}
-
 variable "ami_id" {
   description = "ami id for the instance"
   type        = string

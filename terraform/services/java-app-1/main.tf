@@ -46,12 +46,26 @@ resource "aws_ec2_tag" "data_subnet_name_tag" {
   value       = "${var.name}-data-subnet-${element(var.availability_zones, count.index)}"
 }
 
+# Fetch the GitHub token from AWS Secrets Manager
+data "aws_secretsmanager_secret" "github_token" {
+  name = "github-token"  # The ID of your secret
+}
+
+data "aws_secretsmanager_secret_version" "github_token_version" {
+  secret_id = data.aws_secretsmanager_secret.github_token.id
+}
+
+# Directly assign the secret value if it's plain text
+locals {
+  github_token = data.aws_secretsmanager_secret_version.github_token_version.secret_string
+}
+
 module "runner_stack" {
   source             = "../../templates/workload/compute/runner_stack"
   vpc_id             = var.vpc_id
   private_subnet_ids = var.private_subnet_ids
   key_name           = var.key_name
-  github_token       = var.github_token
+  github_token       = local.github_token
   github_repo        = var.github_repo
   ami_id             = var.ami_id
   runner_version     = var.runner_version
