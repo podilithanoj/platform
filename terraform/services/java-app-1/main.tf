@@ -60,10 +60,28 @@ locals {
   github_token = data.aws_secretsmanager_secret_version.github_token_version.secret_string
 }
 
+# Fetch VPC ID by CIDR block
+data "aws_vpc" "runner_vpc" {
+  cidr_block = var.vpc_cidr
+}
+
+# Fetch subnets tagged with 'Name' containing 'private'
+data "aws_subnets" "private_subnet_ids" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.runner_vpc.id]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = ["*private*"]  # Replace this with the tag value you're looking for
+  }
+}
+
 module "runner_stack" {
   source             = "../../templates/workload/compute/runner_stack"
-  vpc_id             = var.vpc_id
-  private_subnet_ids = var.private_subnet_ids
+  vpc_id             = data.aws_vpc.runner_vpc.id
+  private_subnet_ids = [for subnet in data.aws_subnets.private_subnet_ids.ids : subnet]
   key_name           = var.key_name
   github_token       = local.github_token
   github_repo        = var.github_repo
@@ -71,4 +89,6 @@ module "runner_stack" {
   runner_version     = var.runner_version
   instance_type      = var.instance_type
 }
+
+
 

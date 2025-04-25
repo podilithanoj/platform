@@ -21,3 +21,7 @@ output "asg_name" {
 output "launch_template_id" {
   value = module.runner_stack.launch_template_id
 }
+
+output "vpc_id" {
+  value = data.aws_vpc.runner_vpc.id
+}

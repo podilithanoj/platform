@@ -5,8 +5,6 @@ availability_zones = ["us-east-1a", "us-east-1b"]
 public_subnets  = ["10.220.15.0/26", "10.220.15.64/26"]
 private_subnets = ["10.220.12.0/24", "10.220.13.0/24"]
 data_subnets    = ["10.220.14.0/25", "10.220.14.128/25"]
-private_subnet_ids = ["subnet-09b736fdc8c995fce", "subnet-02ef34eb78377cd56"]
-vpc_id          = "vpc-04864e75199aeb0ef"
 
 enable_nat_gateway = true
 enable_ipv6        = false
