@@ -13,3 +13,11 @@ output "private_route_table_ids" {
 output "data_route_table_ids" {
   value = slice(module.vpc.private_route_table_ids, length(var.private_subnets), length(module.vpc.private_route_table_ids))
 }
+
+output "asg_name" {
+  value = module.runner_stack.asg_name
+}
+
+output "launch_template_id" {
+  value = module.runner_stack.launch_template_id
+}

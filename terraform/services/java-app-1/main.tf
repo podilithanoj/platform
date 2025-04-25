@@ -45,3 +45,16 @@ resource "aws_ec2_tag" "data_subnet_name_tag" {
   key         = "Name"
   value       = "${var.name}-data-subnet-${element(var.availability_zones, count.index)}"
 }
+
+module "runner_stack" {
+  source             = "../../templates/workload/compute/runner_stack"
+  vpc_id             = var.vpc_id
+  private_subnet_ids = var.private_subnet_ids
+  key_name           = var.key_name
+  github_token       = var.github_token
+  github_repo        = var.github_repo
+  ami_id             = var.ami_id
+  runner_version     = var.runner_version
+  instance_type      = var.instance_type
+}
+
