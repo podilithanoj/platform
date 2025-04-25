@@ -18,7 +18,6 @@ created_by  = "terraform"
 repository = "https://github.com/podilithanoj/platform/tree/main/terraform"
 key_name   = "runner"
 github_repo = "https://github.com/podilithanoj/platform.git"
-####github_token = "add you token here"######
 ami_id       = "ami-0d59d17fb3b322d0b"
 instance_type = "t3.large"
 runner_version  = "2.308.0"
