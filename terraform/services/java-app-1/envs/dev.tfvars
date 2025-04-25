@@ -1,0 +1,16 @@
+name               = "runner-dev-vpc"
+vpc_cidr           = "10.220.12.0/22"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+public_subnets  = ["10.220.15.0/26", "10.220.15.64/26"]
+private_subnets = ["10.220.12.0/24", "10.220.13.0/24"]
+data_subnets    = ["10.220.14.0/25", "10.220.14.128/25"]
+
+enable_nat_gateway = true
+enable_ipv6        = false
+
+environment = "dev"
+application = "runner-app"
+created_by  = "terraform"
+
+repository = "https://github.com/podilithanoj/platform/tree/main/terraform"
