@@ -79,15 +79,6 @@ variable "instance_type" {
   description = "instance type for the creation"
   type        = string
 }
-#variable "private_subnet_ids" {
-#  description = "List of private subnet ids"
-#  type        = list(string)
-#}
-
-#variable "vpc_id" {
-#  description = "vpc id block for the VPC"
-#  type        = string
-#}
 
 variable "runner_version" {
   description = "Version of the GitHub Runner to install"
