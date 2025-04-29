@@ -14,6 +14,9 @@ locals {
   }
 }
 
+# --------------------------------------
+# VPC creation
+# --------------------------------------
 module "vpc" {
   source  = "../../templates/network/vpc"
 
@@ -38,7 +41,9 @@ module "vpc" {
   })
 }
 
-# Tags only the data-specific subnets (which were appended to private_subnets)
+# --------------------------------------
+# Tagging Data Subnets
+# --------------------------------------
 resource "aws_ec2_tag" "data_subnet_name_tag" {
   count       = length(var.data_subnets)
   resource_id = module.vpc.private_subnets[count.index + length(var.private_subnets)]
@@ -46,26 +51,13 @@ resource "aws_ec2_tag" "data_subnet_name_tag" {
   value       = "${var.name}-data-subnet-${element(var.availability_zones, count.index)}"
 }
 
-# Fetch the GitHub token from AWS Secrets Manager
-data "aws_secretsmanager_secret" "github_token" {
-  name = "github-token"  # The ID of your secret
-}
-
-data "aws_secretsmanager_secret_version" "github_token_version" {
-  secret_id = data.aws_secretsmanager_secret.github_token.id
-}
-
-# Directly assign the secret value if it's plain text
-locals {
-  github_token = data.aws_secretsmanager_secret_version.github_token_version.secret_string
-}
-
-# Fetch VPC ID by CIDR block
+# --------------------------------------
+# Fetch VPC and Subnets
+# --------------------------------------
 data "aws_vpc" "runner_vpc" {
   cidr_block = var.vpc_cidr
 }
 
-# Fetch subnets tagged with 'Name' containing 'private'
 data "aws_subnets" "private_subnet_ids" {
   filter {
     name   = "vpc-id"
@@ -74,22 +66,26 @@ data "aws_subnets" "private_subnet_ids" {
 
   filter {
     name   = "tag:Name"
-    values = ["*private*"]  # Replace this with the tag value you're looking for
+    values = ["*private*"]
   }
 }
 
+# --------------------------------------
+# Runner Stack (No token fetched here!)
+# --------------------------------------
 module "runner_stack" {
-  source             = "../../templates/workload/compute/runner_stack"
-  vpc_id             = data.aws_vpc.runner_vpc.id
-  private_subnet_ids = [for subnet in data.aws_subnets.private_subnet_ids.ids : subnet]
-  key_name           = var.key_name
-  github_token       = local.github_token
-  github_repo        = var.github_repo
-  ami_id             = var.ami_id
-  runner_version     = var.runner_version
-  instance_type      = var.instance_type
+  source                     = "../../templates/workload/compute/runner_stack"
+
+  vpc_id                     = data.aws_vpc.runner_vpc.id
+  private_subnet_ids          = [for subnet in data.aws_subnets.private_subnet_ids.ids : subnet]
+  
+  key_name                   = var.key_name
+  github_repo                = var.github_repo
+  secret_name                = var.secret_name
+  region                     = var.region
+  ami_id                     = var.ami_id
+  runner_version             = var.runner_version
+  instance_type              = var.instance_type
   iam_instance_profile_name  = var.iam_instance_profile_name
+  name_prefix                = var.application # typically java-app-1
 }
-
-
-

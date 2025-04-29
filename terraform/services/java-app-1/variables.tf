@@ -57,34 +57,46 @@ variable "application" {
 }
 
 variable "repository" {
-  description = "Source code repository URL"
+  description = "Source code repository name (example: org/repo)"
   type        = string
 }
 
 variable "key_name" {
-  description = "pem key file name"
+  description = "Name of the SSH key pair (PEM file) for EC2 instances"
   type        = string
 }
 
 variable "github_repo" {
-  description = "github repo configuration"
+  description = "GitHub repository for registering the runner (format: org/repo)"
   type        = string
 }
 
 variable "ami_id" {
-  description = "ami id for the instance"
+  description = "AMI ID for launching EC2 instance"
   type        = string
 }
+
 variable "instance_type" {
-  description = "instance type for the creation"
+  description = "Instance type for GitHub runner EC2 instance"
   type        = string
 }
 
 variable "runner_version" {
-  description = "Version of the GitHub Runner to install"
+  description = "Version of the GitHub Runner to install (example: 2.308.0)"
   type        = string
 }
+
 variable "iam_instance_profile_name" {
-  description = "IAM instance profile name to assign to runner EC2"
+  description = "IAM instance profile name attached to GitHub runner EC2 instances"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region where resources will be deployed"
+  type        = string
+}
+
+variable "secret_name" {
+  description = "AWS Secrets Manager secret name containing GitHub runner registration token"
   type        = string
 }
