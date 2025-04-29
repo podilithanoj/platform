@@ -88,6 +88,7 @@ module "runner_stack" {
   ami_id             = var.ami_id
   runner_version     = var.runner_version
   instance_type      = var.instance_type
+  iam_instance_profile_name  = var.iam_instance_profile_name
 }
 
 

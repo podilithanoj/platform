@@ -32,6 +32,9 @@ resource "aws_launch_template" "github_runner" {
   key_name      = var.key_name
   user_data     = base64encode(data.template_file.user_data.rendered)
 
+   iam_instance_profile {                    
+    name = var.iam_instance_profile_name    
+  }
   network_interfaces {
     associate_public_ip_address = false
     security_groups             = [aws_security_group.github_runner_sg.id]

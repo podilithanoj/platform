@@ -35,3 +35,8 @@ variable "runner_version" {
   description = "Version of the GitHub Runner to install"
   type        = string
 }
+variable "iam_instance_profile_name" {
+  description = "IAM instance profile name to assign to runner EC2"
+  type        = string
+}
+
