@@ -5,3 +5,6 @@ output "asg_name" {
 output "launch_template_id" {
   value = aws_launch_template.github_runner.id
 }
+output "rendered_user_data" {
+  value = data.template_file.user_data.rendered
+}

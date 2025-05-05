@@ -16,7 +16,7 @@ resource "aws_security_group" "github_runner_sg" {
 }
 
 data "template_file" "user_data" {
-  template = file("${path.module}/user_data.sh")
+  template = "${file("${path.module}/user_data.sh")}"
 
   vars = {
     github_repo    = var.github_repo

@@ -25,3 +25,7 @@ output "launch_template_id" {
 output "vpc_id" {
   value = data.aws_vpc.runner_vpc.id
 }
+output "rendered_user_data_debug" {
+  value = module.runner_stack.rendered_user_data
+}
+
