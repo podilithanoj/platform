@@ -5,7 +5,7 @@ region="${region}"
 secret_name="${secret_name}"
 runner_version="${runner_version}"
 github_repo="${github_repo}"
-
+runner_label="${runner_label}" 
 
 # --- Install base dependencies ---
 apt-get update -y
@@ -16,51 +16,53 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 ./aws/install
 
-# Ensure AWS CLI is in the path
 export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/aws-cli/v2/current/bin
 aws --version
 
-# --- Install Java and Maven (Optional) ---
+# --- Install Java and Maven ---
 add-apt-repository -y ppa:openjdk-r/ppa
 apt-get update -y
 apt-get install -y openjdk-17-jdk maven
 java -version
 mvn -version
 
-# --- Fetch GitHub Runner Token securely from AWS Secrets Manager ---
+# --- Fetch GitHub PAT from AWS Secrets Manager ---
 raw_secret=$(aws secretsmanager get-secret-value \
   --region "$region" \
   --secret-id "$secret_name" \
   --query SecretString \
   --output text)
 
-# Parse the github_token from JSON string
-github_token=$(echo "$raw_secret" | jq -r '.github_token')
-echo "DEBUG: github_token=$github_token" >> /var/log/github-token.log
+github_pat=$(echo "$raw_secret" | jq -r '.github_pat')
 
-# --- Setup GitHub Actions Runner ---
+# --- Generate GitHub registration token using the PAT ---
+github_token=$(curl -s -X POST \
+  -H "Authorization: token $github_pat" \
+  -H "Accept: application/vnd.github+json" \
+  "https://api.github.com/repos/${github_repo}/actions/runners/registration-token" \
+  | jq -r .token)
+
+echo "GitHub registration token fetched successfully" >> /var/log/github-runner.log
+
+# --- Set up the runner directory ---
 mkdir -p /actions-runner
 cd /actions-runner
 
-# --- Download and Extract GitHub Runner binary ---
 curl -O -L "https://github.com/actions/runner/releases/download/v${runner_version}/actions-runner-linux-x64-${runner_version}.tar.gz"
 tar xzf "actions-runner-linux-x64-${runner_version}.tar.gz"
 
-# --- Install runner dependencies ---
 ./bin/installdependencies.sh
-
-# --- Set correct permissions ---
 chown -R ubuntu:ubuntu /actions-runner
 
-# --- Configure the runner ---
+# --- Register the runner (as ubuntu) ---
 su - ubuntu -c "/actions-runner/config.sh \
   --url https://github.com/${github_repo} \
-  --token "$github_token" \
+  --token $github_token \
   --unattended \
-  --labels terraform-runner" >> /var/log/github-runner-config.log 2>&1
+  --labels $runner_label"
 
-# --- Create a systemd service for GitHub Actions Runner ---
-sudo tee /etc/systemd/system/actions.runner.service > /dev/null <<EOF
+# --- Create systemd service ---
+cat <<EOF | sudo tee /etc/systemd/system/actions.runner.service > /dev/null
 [Unit]
 Description=GitHub Actions Runner
 After=network.target
@@ -76,9 +78,8 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# --- Enable and start the runner service ---
 sudo systemctl daemon-reload
 sudo systemctl enable actions.runner
 sudo systemctl start actions.runner
 
-
+echo "GitHub Actions runner setup complete." >> /var/log/github-runner.log

@@ -1,5 +1,5 @@
 variable "name" {
-  description = "Name prefix for resources"
+  description = "Name prefix for all resources"
   type        = string
 }
 
@@ -9,7 +9,7 @@ variable "vpc_cidr" {
 }
 
 variable "availability_zones" {
-  description = "List of Availability Zones used"
+  description = "List of availability zones to use"
   type        = list(string)
 }
 
@@ -23,12 +23,6 @@ variable "private_subnets" {
   type        = list(string)
 }
 
-variable "data_subnets" {
-  description = "List of data-tier (private) subnet CIDRs"
-  type        = list(string)
-  default     = []
-}
-
 variable "enable_nat_gateway" {
   description = "Enable NAT Gateway for private subnets"
   type        = bool
@@ -36,29 +30,9 @@ variable "enable_nat_gateway" {
 }
 
 variable "enable_ipv6" {
-  description = "Enable IPv6 support"
+  description = "Enable IPv6 support in VPC"
   type        = bool
   default     = false
-}
-
-variable "environment" {
-  description = "Environment name (e.g., dev, staging, prod)"
-  type        = string
-}
-
-variable "created_by" {
-  description = "Indicates the tool/team that created the infrastructure"
-  type        = string
-}
-
-variable "application" {
-  description = "Application or microservice name"
-  type        = string
-}
-
-variable "repository" {
-  description = "URL of the Git repository managing this infrastructure"
-  type        = string
 }
 
 variable "vpc_tags" {
@@ -68,13 +42,13 @@ variable "vpc_tags" {
 }
 
 variable "public_subnet_tags" {
-  description = "Tags to apply to all public subnets"
+  description = "Tags to apply to public subnets"
   type        = map(string)
   default     = {}
 }
 
 variable "private_subnet_tags" {
-  description = "Tags to apply to all private subnets"
+  description = "Tags to apply to private subnets"
   type        = map(string)
   default     = {}
 }
@@ -90,9 +64,24 @@ variable "nat_gateway_tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "tags" {
-  description = "A map of tags to add to all resources"
-  type        = map(string)
-  default     = {}
+variable "application" {
+  description = "Application name"
+  type        = string
 }
+
+variable "created_by" {
+  description = "Creator of the infrastructure"
+  type        = string
+  default     = "terraform"
+}
+
+variable "environment" {
+  description = "Deployment environment (e.g., dev, staging, prod)"
+  type        = string
+}
+
+variable "repository" {
+  description = "Git repository URL or name"
+  type        = string
+}
+

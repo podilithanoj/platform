@@ -23,6 +23,7 @@ data "template_file" "user_data" {
     runner_version = var.runner_version
     secret_name    = var.secret_name
     region         = var.region
+    runner_label   = var.runner_label
   }
 }
 
@@ -44,27 +45,53 @@ resource "aws_launch_template" "github_runner" {
 
   tag_specifications {
     resource_type = "instance"
-    tags = {
-      Name = "${var.name_prefix}-github-runner"
-    }
+    tags = merge(
+      {
+        Name = "${var.name_prefix}-github-runner"
+      },
+      var.tags
+    )
   }
 }
 
 resource "aws_autoscaling_group" "runner_asg" {
-  desired_capacity     = 1
-  max_size             = 2
-  min_size             = 1
-  vpc_zone_identifier  = var.private_subnet_ids
+  desired_capacity          = var.asg_config.desired_capacity
+  max_size                 = var.asg_config.max_size
+  min_size                 = var.asg_config.min_size
+  health_check_type        = var.asg_config.health_check_type
+  health_check_grace_period = var.asg_config.health_check_grace_period
+  vpc_zone_identifier      = var.private_subnet_ids
 
   launch_template {
     id      = aws_launch_template.github_runner.id
     version = "$Latest"
   }
 
-  tag {
-    key                 = "Name"
-    value               = "${var.name_prefix}-runner-asg"
-    propagate_at_launch = true
+  dynamic "instance_refresh" {
+    for_each = var.asg_config.instance_refresh != null ? [var.asg_config.instance_refresh] : []
+    content {
+      strategy = instance_refresh.value.strategy
+      preferences {
+        min_healthy_percentage = instance_refresh.value.preferences.min_healthy_percentage
+        instance_warmup        = instance_refresh.value.preferences.instance_warmup
+        checkpoint_delay       = instance_refresh.value.preferences.checkpoint_delay
+        checkpoint_percentages = instance_refresh.value.preferences.checkpoint_percentages
+      }
+    }
+  }
+
+  dynamic "tag" {
+    for_each = merge(
+      {
+        Name = "${var.name_prefix}-runner-asg"
+      },
+      var.tags
+    )
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
   }
 
   lifecycle {
